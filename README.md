@@ -1,34 +1,51 @@
 # Cmake monorepo example with optional package manager dependency management
 
-This project consists of five individual repos in one big monorepo:
+This project consists of the following individual repos in one big monorepo:
 
 - `a/`
 - `b/`
 - `c/`
 - `d/`
+- `libc/`
 - `app/`
+- `app2/`
 
-These have the following dependency tree:
-
-![The modules in this repo depend on each other](deptree.png)
-
-The whole idea of this example repository is to show that this whole repo
-can be used in two different scenarios:
+The whole idea of this example repository is to show that we can compile the
+apps and libs with different toolchains for different environments. Especially
+the following things are shown:
 
 1. Using legacy package management or one large docker image, the whole project
-   and its libraries can be built in one large step using the workflow:
+   and its libraries can be built in one large step for a given toolchain file
+   using the workflow:
 
    ```bash
-   mkdir build && cd build
-   cmake ..
-   make
+   cmake -DCMAKE_TOOLCHAIN_FILE=cmake/host.cmake -B build-host -S .
+   make -C build-host
+
+   cmake -DCMAKE_TOOLCHAIN_FILE=cmake/cross.cmake -B build-cross -S .
+   make -C build-cross
    ```
-2. Using `nix`, individual packages can be built as packages in a way that they
-   can be cached individually and reference each other:
+2. Using `nix`, individual packages can be built for both toolchains as
+   packages in a way that they can be cached individually and reference each
+   other:
 
    ```bash
-   nix-build release.nix -A myapp # other attributes to build are a, b, c, and d
+   nix-build release.nix -A myapp
+   nix-build release.nix -A myapp-cross
    ```
+3. Legacy workflow only: The `app2` is only compiled if we use the
+   `cross.cmake` toolchain. This mechanism can be used to compile e.g. unit
+   tests only when compiling for the current build host.
+4. Transparently (from cmake app and libs perspective) compile with a custom
+   libc and with the host systems libc. The app's cmake definitions do not need
+   to care about which toolchain is used currently.
+5. We are not compiling a specific lib with different compiler flags in a
+   single cmake invocation (e.g. doing something like `lib-hello-${LIB-TYPE}`)
+   which would make the `find_package` trick very cumbersome.
+6. We have only two points where we define compiler/toolchain settings which
+   are the cmake toolchain files and the release.nix. The settings defined
+   there are passed down to every other app avoiding to redefine every compiler
+   flag in every project.
 
 # Workflow PROs and CONs
 
