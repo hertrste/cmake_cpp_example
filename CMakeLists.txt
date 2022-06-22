@@ -5,7 +5,7 @@ project(abc_example CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(as_subproject A B C D)
+set(as_subproject libc A B C D)
 
 macro(find_package)
   message(STATUS "as subprojet is ${as_subproject}")
@@ -16,11 +16,21 @@ macro(find_package)
   endif()
 endmacro()
 
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "x86_64_Baremetal")
+    add_subdirectory(libc)
+endif()
+
 add_subdirectory(a)
 add_subdirectory(b)
 add_subdirectory(c)
 add_subdirectory(d)
+
 add_subdirectory(app)
+
+# Have some baremetal only targets
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "x86_64_Baremetal")
+    add_subdirectory(app2)
+endif()
 
 add_custom_target(graphviz ALL
     COMMAND ${CMAKE_COMMAND} "--graphviz=abc-structure.dot" .
