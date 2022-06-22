@@ -1,0 +1,13 @@
+#pragma once
+
+// Simple dummy printf to simulate a custom libc compatibility lib doing a raw
+// write system call on stdout.
+void printf(const char* msg)
+{
+    unsigned len = 0;
+    for (len = 0; msg[len] != 0; len++) {}
+
+    unsigned sys_num = 1; // write syscall
+    unsigned fd = 1; // stdout
+    asm volatile ("syscall" :: "a"(sys_num), "D"(fd), "S"(msg), "d"(len) : "rbx", "rcx");
+}
