@@ -2,6 +2,6 @@
 
 namespace libb {
 
-std::string function_b() { return "b"; }
+const char* function_b() { return "b"; }
 
 }

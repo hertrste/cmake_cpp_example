@@ -2,6 +2,6 @@
 
 namespace libd {
 
-std::string function_d() { return "d"; }
+const char* function_d() { return "d"; }
 
 }

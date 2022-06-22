@@ -2,11 +2,9 @@
 
 #include <d.hpp>
 
-#include <string>
-
 namespace liba {
 
-std::string function_a();
-std::string function_c();
+const char* function_a();
+const char* function_c();
 
 }

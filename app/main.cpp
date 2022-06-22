@@ -1,12 +1,13 @@
 #include <a.hpp>
 #include <b.hpp>
 
-#include <iostream>
+#include <cstdio>
 
 int main() {
-  std::cout << liba::function_a()
-            << libb::function_b()
-            << liba::function_c()
-            << libd::function_d()
-            << '\n';
+  printf("Hello from MyApp\n");
+
+  printf(liba::function_a());
+  printf(libb::function_b());
+  printf(liba::function_c());
+  printf(libd::function_d());
 }

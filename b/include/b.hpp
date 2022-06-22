@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
-
 namespace libb {
 
-std::string function_b();
+const char* function_b();
 
 }
